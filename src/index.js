@@ -2,6 +2,7 @@ import Promise from 'bluebird';
 import _ from 'lodash';
 import preProcessPattern from './preProcessPattern';
 import processPattern from './processPattern';
+import path from 'path';
 
 function CopyWebpackPlugin(patterns = [], options = {}) {
     if (!Array.isArray(patterns)) {
@@ -16,6 +17,17 @@ function CopyWebpackPlugin(patterns = [], options = {}) {
         options.debug = 'info';
     }
 
+    options.manifest = options.manifest ? Object.assign({}, {
+        basePath: '',
+        path: '.',
+        processFromPattern: null,
+        filename: 'webpack-assets.json',
+        processOutput(assets) {
+            return JSON.stringify(assets, null, null);
+        }
+    }, options.manifest) : null;
+
+    const assetsMap = {};
     const debugLevels = ['warning', 'info', 'debug'];
     const debugLevelIndex = debugLevels.indexOf(options.debug);
     function log(msg, level) {
@@ -75,12 +87,37 @@ function CopyWebpackPlugin(patterns = [], options = {}) {
             }
 
             Promise.each(patterns, (pattern) => {
+                if (options.manifest) {
+                    pattern.manifestBasePath = pattern.manifestBasePath
+                        ? pattern.manifestBasePath
+                        : options.manifest.basePath;
+
+                    pattern.excludeFromManifest = pattern.excludeFromManifest
+                        ? pattern.excludeFromManifest
+                        : false;
+                }
+
                 // Identify absolute source of each pattern and destination type
                 return preProcessPattern(globalRef, pattern)
                 .then((pattern) => {
                     // Every source (from) is assumed to exist here
-                    return processPattern(globalRef, pattern);
+                    return processPattern(globalRef, pattern, options.manifest ? assetsMap : null);
                 });
+            })
+            .then(() => {
+                if (options.manifest && Object.keys(assetsMap).length > 0) {
+                    const outputPath = path.join(options.manifest.path, options.manifest.filename);
+                    const content = options.manifest.processOutput(assetsMap);
+
+                    compilation.assets[outputPath] = {
+                        size: function() {
+                            return content.length;
+                        },
+                        source: function() {
+                            return content;
+                        }
+                    };
+                }
             })
             .catch((err) => {
                 compilation.errors.push(err);

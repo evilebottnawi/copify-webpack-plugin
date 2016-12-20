@@ -1,4 +1,4 @@
-## Copy Webpack Plugin
+## Copify Webpack Plugin
 
 This is a [webpack](http://webpack.github.io/) plugin that copies individual files or entire directories to the build directory.
 
@@ -7,12 +7,12 @@ This is a [webpack](http://webpack.github.io/) plugin that copies individual fil
 Install the plugin:
 
 ```
-npm install --save-dev copy-webpack-plugin
+npm install --save-dev copify-webpack-plugin
 ```
 
 ### Usage
 
-`new CopyWebpackPlugin([patterns], options)`
+`new CopifyWebpackPlugin([patterns], options)`
 
 A pattern looks like:
 `{ from: 'source', to: 'dest' }`
@@ -29,19 +29,21 @@ A pattern looks like:
 | `ignore` | N | [] | Additional globs to ignore for this pattern |
 | `transform` | N | function(content, path) {<br>&nbsp;&nbsp;return content;<br>} | Function that modifies file contents before writing to webpack |
 | `force` | N | false | Overwrites files already in compilation.assets (usually added by other plugins) |
+| `excludeFromManifest` | N | false | Exclude from manifest |
 
 #### Available options:
 
 | Name | Default | Details |
 | ---- | ------- | ------- |
 | `ignore` | [] | Array of globs to ignore (applied to `from`) |
+| `manifest` | N | Manifest options |
 | `copyUnmodified` | false | Copies files, regardless of modification when using watch or webpack-dev-server. All files are copied on first build, regardless of this option. |
 | `debug` | **'warning'** | _options:_<br>**'warning'** - only warnings<br>**'info'** or true - file location and read info<br>**'debug'** - very detailed debugging info
 
 ### Examples
 
 ```javascript
-var CopyWebpackPlugin = require('copy-webpack-plugin');
+var CopifyWebpackPlugin = require('copify-webpack-plugin');
 var path = require('path');
 
 module.exports = {
@@ -53,7 +55,7 @@ module.exports = {
         outputPath: path.join(__dirname, 'build')
     },
     plugins: [
-        new CopyWebpackPlugin([
+        new CopifyWebpackPlugin([
             // {output}/file.txt
             { from: 'from/file.txt' },
             

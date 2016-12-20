@@ -4,7 +4,7 @@ import path from 'path';
 
 const fs = Promise.promisifyAll(require('fs')); // eslint-disable-line import/no-commonjs
 
-export default function writeFile(globalRef, pattern, file) {
+export default function writeFile(globalRef, pattern, file, assetsMap) {
     const {info, debug, compilation, fileDependencies, written, copyUnmodified} = globalRef;
 
     return fs.statAsync(file.absoluteFrom)
@@ -62,6 +62,24 @@ export default function writeFile(globalRef, pattern, file) {
                     let newBasename = path.basename(file.webpackTo);
                     file.webpackTo = path.dirname(file.webpackTo) + '/.' + newBasename;
                 }
+            }
+
+            if (assetsMap && !pattern.excludeFromManifest  && pattern.fromType !== 'nonexistent') {
+                let manifestTo = file.webpackTo;
+                let manifestFrom = null;
+
+                if (pattern.fromType === 'dir' || pattern.fromType === 'file') {
+                    manifestFrom = path.join(path.dirname(manifestTo), path.basename(file.relativeFrom));
+                } else if (pattern.fromType === 'glob') {
+                    manifestFrom = file.relativeFrom;
+                }
+
+                if (pattern.manifestBasePath) {
+                    manifestFrom = path.join(pattern.manifestBasePath, manifestFrom);
+                    manifestTo = path.join(pattern.manifestBasePath, manifestTo);
+                }
+
+                assetsMap[manifestFrom] = manifestTo;
             }
 
             if (!copyUnmodified &&

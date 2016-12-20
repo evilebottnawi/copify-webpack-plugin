@@ -18,6 +18,7 @@ export default function preProcessPattern(globalRef, pattern) {
     if (!path.isAbsolute(pattern.context)) {
         pattern.context = path.join(context, pattern.context);
     }
+    pattern.realContext = pattern.context;
     pattern.ignore = globalRef.ignore.concat(pattern.ignore || []);
 
     info(`processing from: '${pattern.from}' to: '${pattern.to}'`);

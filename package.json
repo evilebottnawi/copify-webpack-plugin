@@ -1,22 +1,23 @@
 {
-  "name": "copy-webpack-plugin",
-  "version": "4.0.1",
-  "description": "Copy files and directories in webpack",
+  "name": "copify-webpack-plugin",
+  "version": "0.4.0",
+  "description": "Copy files and directories in webpack, supported manifest",
   "main": "dist/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kevlened/copy-webpack-plugin.git"
+    "url": "https://github.com/kevlened/copify-webpack-plugin.git"
   },
   "keywords": [
     "webpack",
     "plugin",
     "transfer",
     "move",
-    "copy"
+    "copy",
+    "manifest"
   ],
   "author": "Len Boyette",
   "license": "MIT",
-  "homepage": "https://github.com/kevlened/copy-webpack-plugin",
+  "homepage": "https://github.com/kevlened/copify-webpack-plugin",
   "dependencies": {
     "bluebird": "^2.10.2",
     "fs-extra": "^0.26.4",

@@ -6,7 +6,7 @@ import writeFile from './writeFile';
 
 const globAsync = Promise.promisify(require('glob')); // eslint-disable-line import/no-commonjs
 
-export default function processPattern(globalRef, pattern) {
+export default function processPattern(globalRef, pattern, assetsMap) {
     const {info, debug, output, concurrency} = globalRef;
     const globArgs = _.assign({
         cwd: pattern.context
@@ -83,6 +83,6 @@ export default function processPattern(globalRef, pattern) {
 
         info(`determined that '${fileFrom}' should write to '${file.webpackTo}'`);
 
-        return writeFile(globalRef, pattern, file);
+        return writeFile(globalRef, pattern, file, assetsMap);
     }, {concurrency: concurrency || 100}); // This is usually less than file read maximums while staying performant
 }
